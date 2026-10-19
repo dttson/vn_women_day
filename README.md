@@ -24,6 +24,8 @@ npm run preview
 
 ## Deploy to Vercel
 
+Hướng dẫn tiếng Việt: [Deploy lên Vercel](docs/DEPLOY_VERCEL.md).
+
 `vercel.json` configures Vite, `npm ci`, tests followed by the production build, and the `dist` output. Node.js is pinned to 22.x. `.vercelignore` excludes Blender sources and local previews from uploads; runtime photos and models under `public/` are included.
 
 Run `npx vercel login` once, then `npx vercel --prod` from this directory. Select or create the SmallGif project in the intended Vercel account. Use its stable production URL for daily care so browser progress stays on the same origin.
