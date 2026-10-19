@@ -1,0 +1,19 @@
+.DS_Store
+*.blend1
+*.blend2
+__pycache__/
+node_modules/
+dist/
+.vite/
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+.vercel/
+
+# Private photos and previews stay on this computer.
+public/images/family/
+public/images/memories/
+docs/previews/
+private-local/

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.git/
+assets/
+docs/previews/
+*.blend
+*.blend1
+*.blend2
+
+# Private photos and previews stay on this computer.
+public/images/family/
+public/images/memories/
+docs/previews/
+private-local/

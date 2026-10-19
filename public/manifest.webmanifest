@@ -1,0 +1,7 @@
+{
+  "name": "Một bông hoa dành cho mẹ",
+  "short_name": "Hoa của mẹ",
+  "id": "/", "start_url": "/", "scope": "/",
+  "display": "standalone", "background_color": "#f6f0e8", "theme_color": "#f6f0e8",
+  "icons": [{"src": "/flower.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}]
+}

@@ -1,0 +1,57 @@
+{
+  "configVersion": 1,
+  "title": "Một bông hoa",
+  "subtitle": "dành cho mẹ.",
+  "occasion": "MỪNG 20.10 · GỬI MẸ YÊU",
+  "sender": "Ba",
+  "watering": {
+    "durationMs": 7000,
+    "absorptionMs": 1800000,
+    "firstBloomWaterings": 3,
+    "dailyCooldownMs": 86400000,
+    "seasonWaterings": 5
+  },
+  "visual": {
+    "modelUrl": "/models/flower.glb",
+    "fallbackUrl": "/images/flower-bud.png",
+    "background": "#f6f0e8",
+    "pixelRatioCap": 1.75,
+    "swayAmount": 0.018,
+    "dustCount": 40
+  },
+  "messages": [
+    {"id": "welcome", "afterWaterings": 0, "label": "MỘT ĐIỀU NHỎ BA MUỐN GỬI", "text": "Ba có một bông hoa dành cho mẹ. Mẹ chăm một chút, hoa sẽ hé nở nhé."},
+    {"id": "thank-you", "afterWaterings": 1, "label": "MỘT CHÚT YÊU THƯƠNG", "text": "Cảm ơn mẹ vì những điều nhỏ bé mẹ làm cho cả nhà mỗi ngày."},
+    {"id": "ordinary-days", "afterWaterings": 2, "label": "THÊM MỘT CHÚT NỮA THÔI", "text": "Có mẹ, những ngày bình thường của ba và hai con cũng trở nên đặc biệt."},
+    {"id": "first-bloom", "afterWaterings": 3, "label": "CHÚC MỪNG 20/10, MẸ YÊU", "text": "Bông hoa này ba dành tặng mẹ. Cảm ơn mẹ vì đã cùng ba chăm sóc tổ ấm và hai em bé Bisu và Ryo."},
+    {"id": "tomorrow", "afterWaterings": 4, "label": "YÊU THƯƠNG, MỖI NGÀY", "text": "Qua ngày 20/10 rồi, ba vẫn muốn dành những điều dịu dàng này cho mẹ."},
+    {"id": "home", "afterWaterings": 6, "label": "NHÀ LÀ NƠI CÓ MẸ", "text": "Mong mẹ luôn có những khoảng thời gian dành riêng cho mình, và những ngày thật nhẹ nhàng."},
+    {"id": "new-season", "afterWaterings": 8, "label": "MỘT MÙA YÊU THƯƠNG MỚI", "text": "Thêm một mùa hoa, thêm một lời cảm ơn. Ôm mẹ, hôm nay và những ngày sau nữa."}
+  ],
+  "albumAnimation": {"lidOpenMs":400,"spreadMs":680,"gatherMs":500,"lidCloseMs":320},
+  "photoMemories": [],
+  "familyPhotos": {},
+  "growth": {
+    "flowerNames": ["Ba", "Bisu", "Ryo"],
+    "keepsakes": [
+      {"id":"family-bouquet","title":"Cả nhà ở bên mẹ","text":"Ba, Bisu và Ryo — ba bông hoa nhỏ cùng ở bên mẹ. Cảm ơn mẹ đã chăm khu vườn của cả nhà."},
+      {"id":"little-rest","title":"Một khoảng riêng cho mẹ","text":"Hôm nay mẹ nhớ dành một chút thời gian cho điều mình thích nhé. Mẹ cũng cần được chăm chút như những bông hoa này."},
+      {"id":"ordinary-joy","title":"Những ngày bình thường","text":"Những tiếng cười của Bisu và Ryo, những lúc cả nhà ở bên nhau — ba muốn giữ lại thật nhiều điều nhỏ bé ấy cùng mẹ."},
+      {"id":"thank-you-again","title":"Thêm một lời cảm ơn","text":"Có những điều ba vẫn muốn nói lại: cảm ơn mẹ vì đã cùng ba xây nên Gia đình SML."},
+      {"id":"together-tomorrow","title":"Ngày mai, cùng nhau","text":"Mình cứ thong thả cùng nhau đi qua từng ngày, chăm hai bạn nhỏ và dành cho nhau những điều dịu dàng nhé mẹ."},
+      {"id":"always-love","title":"Vẫn thương mẹ như ngày đầu","text":"Khu vườn đã có thật nhiều yêu thương. Ba vẫn muốn dành thêm một bông hoa, thêm một cái ôm và thêm những ngày ở bên mẹ."}
+    ]
+  },
+  "letter": {
+    "title": "Gửi mẹ SuRy",
+    "paragraphs": [
+      "Có những lời cảm ơn ba không nói thường xuyên, dù trong lòng vẫn luôn nhớ.",
+      "Cảm ơn mẹ vì đã cùng ba đi qua những ngày vất vả và bận rộn, vì những đêm thức khuya coi phim rồi sáng dậy không nổi.",
+      "Cảm ơn mẹ vì đã luôn là hậu phương vững chắc, là nơi ấm áp và an toàn để ba trở về, là nơi lúc nào cũng tràn ngập tiếng cười của 2 đứa nhỏ.",
+      "Cảm ơn mẹ vì tình yêu mẹ dành cho Bisu và Ryo.",
+      "Ba mong mẹ luôn được yêu thương, được nghỉ ngơi, được làm những điều mẹ thích. Và ba muốn cùng mẹ chăm sóc tổ ấm này, từng chút một, như cách mình chăm bông hoa nhỏ.",
+      "Chúc mừng 20/10, mẹ yêu. Bông hoa này dành cho mẹ. Còn tình yêu của ba thì dành cho mẹ mỗi ngày."
+    ],
+    "signature": "Thương mẹ,\nBa ♡"
+  }
+}
