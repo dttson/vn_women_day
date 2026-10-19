@@ -4,6 +4,7 @@
   "subtitle": "dành cho mẹ.",
   "occasion": "MỪNG 20.10 · GỬI MẸ YÊU",
   "sender": "Ba",
+  "audio": {"musicVolume":0.18,"clickVolume":0.14,"bloomVolume":0.35,"pageVolume":0.22},
   "watering": {
     "durationMs": 7000,
     "absorptionMs": 1800000,

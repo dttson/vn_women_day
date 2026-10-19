@@ -21,7 +21,7 @@ export class PhotoAlbum {
   private gesture?:{id:number;x:number;y:number;dx:number;dragging:boolean};
   private suppressClick=false;
 
-  constructor(host:HTMLElement,private config:AppConfig){
+  constructor(host:HTMLElement,private config:AppConfig,private onPage:()=>void=()=>{}){
     host.className='photo-album-content animated-album';
     const heading=document.createElement('h2');heading.textContent='Những điều thật thương.';
     const subtitle=document.createElement('p');subtitle.className='album-subtitle';subtitle.textContent='Mở chiếc hộp nhỏ, gặp lại những khoảnh khắc của nhà mình.';
@@ -78,6 +78,7 @@ export class PhotoAlbum {
     this.previous.disabled=!ready||this.cards.length<2;this.next.disabled=!ready||this.cards.length<2;
   }
   async open(){
+    this.onPage();
     // Commit the closed pose before transitioning the lid.
     void this.stage.offsetWidth;
     this.setPhase('opening');this.live.textContent='Mở những điều thương…';
@@ -93,6 +94,7 @@ export class PhotoAlbum {
     this.closing=this.gather();return this.closing;
   }
   private async gather(){
+    this.onPage();
     this.resetGesture();this.setPhase('gathering');this.live.textContent='Cất những kỷ niệm vào hộp…';
     await this.wait(this.config.albumAnimation.gatherMs+Math.max(0,this.cards.length-1)*20);
     if(this.disposed)return;
@@ -102,7 +104,9 @@ export class PhotoAlbum {
   }
   private go(index:number){
     if(this.phase!=='ready'||this.disposed)return;
-    this.active=(index+this.cards.length)%this.cards.length;
+    const next=(index+this.cards.length)%this.cards.length;
+    if(next===this.active)return;
+    this.active=next;this.onPage();
     this.cards[this.active].querySelector('img')!.src=this.config.photoMemories[this.active].src;
     this.layout();
   }

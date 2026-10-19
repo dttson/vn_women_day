@@ -26,7 +26,7 @@ npm run preview
 
 Hướng dẫn tiếng Việt: [Deploy lên Vercel](docs/DEPLOY_VERCEL.md).
 
-`vercel.json` configures Vite, `npm ci`, tests followed by the production build, and the `dist` output. Node.js is pinned to 22.x. `.vercelignore` excludes Blender sources and local previews from uploads; runtime photos and models under `public/` are included.
+`vercel.json` configures Vite, `npm ci`, tests followed by the production build, and the `dist` output. Node.js is pinned to 22.x. `.vercelignore` excludes Blender sources and local previews from uploads; the runtime model and `assets/sound/` audio imports are included. Family photos remain local to the receiving device.
 
 Run `npx vercel login` once, then `npx vercel --prod` from this directory. Select or create the SmallGif project in the intended Vercel account. Use its stable production URL for daily care so browser progress stays on the same origin.
 
@@ -36,6 +36,7 @@ For Git-based deployment, import `dttson/vn_women_day` into Vercel, use the repo
 
 Edit [`public/config/settings.json`](public/config/settings.json):
 
+- `audio`: background music, click, bloom and photo-chime volumes (0–1). Audio source credits are in `assets/sound/README.md` and `/licenses/AUDIO.txt`.
 - `watering.durationMs`: hold time per can, default 7 seconds.
 - `watering.absorptionMs`: wait between the first watering sessions, default 30 minutes.
 - `watering.firstBloomWaterings`: number of sessions before the first full bloom, default 3.
@@ -55,7 +56,7 @@ Configuration is validated before the app starts. Invalid configuration shows a 
 ## What works
 
 - GLB rose with independent petal/sepal morph targets; approved head size of 1.4× the original model.
-- Watering can animation, water droplets, soil moisture tint, gentle sway and optional synthesized audio.
+- Watering can animation, water droplets, soil moisture tint, gentle sway and optional audio: Gentle piano background music, real button/bloom/page effects, and synthesized watering. The homepage reminds mom to enable sound. Music uses a Web Audio gain, pauses when hidden, and starts through user interaction; the saved sound preference is restored without forcing autoplay.
 - Press and hold with pointer/touch, or focus the water button and hold Space/Enter; release, blur, page hide and pointer cancellation stop watering.
 - Three initial sessions reveal messages and unlock the letter. Each next five daily sessions grows one side branch through leaves, bud and bloom. The bouquet is capped at three flowers, named Ba, Bisu and Ryo.
 - Each partial watering visibly advances the active side flower. After all three bloom, a keepsake unlocks immediately, then another every five completed sessions until the configured set is exhausted. All unlocked keepsakes remain in the memory box; adding more to JSON extends the collection.

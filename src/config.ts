@@ -9,6 +9,12 @@ const familyPhotoSchema=z.object({
 export const configSchema = z.object({
   configVersion: z.literal(1), title: z.string().min(1), subtitle: z.string().min(1),
   occasion: z.string(), sender: z.string(),
+  audio:z.object({
+    musicVolume:z.number().min(0).max(1),
+    clickVolume:z.number().min(0).max(1),
+    bloomVolume:z.number().min(0).max(1),
+    pageVolume:z.number().min(0).max(1),
+  }).default({musicVolume:.18,clickVolume:.14,bloomVolume:.35,pageVolume:.22}),
   watering: z.object({
     durationMs: z.number().int().min(1000).max(60000),
     absorptionMs: z.number().int().min(1000),

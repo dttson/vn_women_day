@@ -39,6 +39,7 @@ app.innerHTML=`
         <p class="eyebrow occasion" id="occasion"></p>
         <h1><span id="title">Một bông hoa</span><br><em id="subtitle">dành cho mẹ.</em></h1>
         <p class="intro-note">Một chút nước. Một chút kiên nhẫn. Thật nhiều yêu thương.</p>
+        <p class="sound-reminder">${svg('sound')} Mẹ nhớ bật âm thanh để trải nghiệm trọn vẹn nhé ♡</p>
       </div>
       <section class="garden" aria-label="Bông hoa của mẹ">
         <div class="halo"></div>
@@ -185,8 +186,11 @@ async function tick(){
     progress=await repository.update(p=>water(p,elapsed,Date.now(),config));
     channel?.postMessage('changed');
     if(progress.waterings>before){
-      stop();audio.chime();
+      stop();
       const afterGrowth=gardenGrowth(progress,config),beforeGrowth=gardenGrowth({...progress,waterings:before},config);
+      if(before<config.watering.firstBloomWaterings||afterGrowth.flowerCount>beforeGrowth.flowerCount){
+        if(progress.waterings>=config.watering.firstBloomWaterings)audio.bloom();
+      }else if(afterGrowth.keepsakes.length>beforeGrowth.keepsakes.length)audio.page();
       notify(progress.firstBloomAt&&before<config.watering.firstBloomWaterings?'Hoa đã nở rồi mẹ ơi. Ba có một lá thư dành cho mẹ ♡':afterGrowth.flowerCount>beforeGrowth.flowerCount?`Bông hoa của ${config.growth.flowerNames[afterGrowth.flowerCount-1]} đã nở rồi mẹ ơi ♡`:afterGrowth.keepsakes.length>beforeGrowth.keepsakes.length?'Ba vừa gửi mẹ một kỷ niệm mới trong Hộp kỷ niệm ♡':afterGrowth.bouquetComplete?'Cảm ơn mẹ đã chăm khu vườn của cả nhà ♡':progress.waterings<config.watering.firstBloomWaterings?'Bông hoa của mẹ lại lớn thêm một chút rồi mẹ ơi.':`Hoa của ${afterGrowth.growingName} lại lớn thêm một chút rồi mẹ ơi.`);
     }
   }catch(error){
@@ -227,7 +231,7 @@ function openPhotoMemories(){
   if(!gardenGrowth(progress,config).keepsakes.some(memory=>memory.id==='little-rest'))return;
   if(!config.photoMemories.length){openPhotoSettings();return;}
   openDialog('HỘP ẢNH KỶ NIỆM');dialog.classList.add('photo-album-dialog');
-  photoAlbum=new PhotoAlbum($('dialog-content'),config);
+  photoAlbum=new PhotoAlbum($('dialog-content'),config,()=>audio.page());
   void photoAlbum.open();
 }
 function downloadBackup(){
@@ -253,7 +257,7 @@ function openSettings(){
       const restored=progressSchema.parse(raw.progress);
       // Explicit confirmation protects a more advanced garden from accidental replacement.
       if(!confirm('Thay tiến độ hiện tại bằng bản sao này?'))return;
-      await repository.replace(restored);progress=restored;channel?.postMessage('changed');render();text('import-status','Đã khôi phục khu vườn của mẹ.');
+      await repository.replace(restored);progress=restored;if(!restored.soundEnabled)void audio.setEnabled(false);channel?.postMessage('changed');render();text('import-status','Đã khôi phục khu vườn của mẹ.');
     }catch{ text('import-status','Không nhập được bản sao. Mẹ kiểm tra lại file nhé.'); }
   };
   void (async()=>{try{const persistent=await navigator.storage?.persisted?.();text('persistent-status',demo?'Bản xem thử không lưu tiến độ.':!storageAvailable?'Phiên này chưa lưu được trên thiết bị.':persistent?'Trình duyệt đã cấp lưu trữ bền vững. Vẫn nên giữ bản sao.':'Đang lưu trên thiết bị. Nên giữ thêm bản sao tiến độ.');}catch{text('persistent-status','Có thể xuất bản sao để giữ lại tiến độ.');}})();
@@ -261,6 +265,7 @@ function openSettings(){
 
 async function boot(){
   config=await loadConfig();
+  audio.configure(config.audio);
   if(demo){config=structuredClone(config);config.watering.durationMs=2500;config.watering.absorptionMs=5000;config.watering.dailyCooldownMs=8000;$('demo-bar').hidden=false;document.body.classList.add('is-demo');}
   text('occasion',config.occasion);text('title',config.title);text('subtitle',config.subtitle);
   document.documentElement.style.setProperty('--background',config.visual.background);
@@ -277,7 +282,7 @@ async function boot(){
   }catch{photoRepository=undefined;config.familyPhotos={};config.photoMemories=[];}
   if(!demo&&'BroadcastChannel' in window){channel=new BroadcastChannel('smallgif-garden');channel.onmessage=event=>{
     if(event.data==='photos'){if(photoAlbum)photosPending=true;else void refreshLocalPhotos().catch(()=>{});return;}
-    if(!busy)void repository.load().then(p=>{progress=p;render();}).catch(()=>{});
+    if(!busy)void repository.load().then(p=>{progress=p;if(!p.soundEnabled)void audio.setEnabled(false);render();}).catch(()=>{});
   };}
   const waterButton=$<HTMLButtonElement>('water');
   waterButton.addEventListener('pointerdown',event=>{if(event.button!==0)return;event.preventDefault();waterPointer=event.pointerId;waterButton.setPointerCapture(event.pointerId);start();});
@@ -285,11 +290,23 @@ async function boot(){
   waterButton.addEventListener('keydown',event=>{if([' ','Enter'].includes(event.key)){event.preventDefault();if(!event.repeat)start();}});
   waterButton.addEventListener('keyup',event=>{if([' ','Enter'].includes(event.key)){event.preventDefault();stop();render();}});
   waterButton.addEventListener('contextmenu',event=>event.preventDefault());
-  window.addEventListener('blur',stop);window.addEventListener('pagehide',stop);
-  document.addEventListener('visibilitychange',()=>{stop();if(!document.hidden&&!busy)void repository.load().then(p=>{progress=p;render();}).catch(()=>{});});
+  window.addEventListener('blur',stop);
+  window.addEventListener('pagehide',()=>{stop();audio.setVisible(false);});
+  window.addEventListener('pageshow',()=>audio.setVisible(!document.hidden));
+  document.addEventListener('visibilitychange',()=>{stop();audio.setVisible(!document.hidden);if(!document.hidden&&!busy)void repository.load().then(p=>{progress=p;if(!p.soundEnabled)void audio.setEnabled(false);render();}).catch(()=>{});});
+  const resumeAudio=()=>{if(progress.soundEnabled)void audio.setEnabled(true).catch(()=>{});};
+  document.addEventListener('pointerdown',resumeAudio,{capture:true});
+  document.addEventListener('keydown',resumeAudio,{capture:true});
+  document.addEventListener('click',event=>{
+    const target=event.target instanceof Element?event.target:undefined;
+    if(!target||target.closest('#sound,#water,#photo-memories,#photo-memories-nav,.animated-album'))return;
+    if(target.closest('button,.file-label'))audio.click();
+  },{capture:true});
   $('sound').onclick=async()=>{
-    try{const enabled=!progress.soundEnabled;await audio.setEnabled(enabled);progress=await repository.update(p=>({...p,soundEnabled:enabled,updatedAt:Date.now()}));channel?.postMessage('changed');render();if(enabled)audio.chime();}
-    catch{notify('Chưa bật được âm thanh. Mẹ thử lại nhé.');}
+    const button=$<HTMLButtonElement>('sound');button.disabled=true;
+    try{const enabled=!progress.soundEnabled;await audio.setEnabled(enabled);progress=await repository.update(p=>({...p,soundEnabled:enabled,updatedAt:Date.now()}));channel?.postMessage('changed');render();if(enabled)audio.click();}
+    catch{void audio.setEnabled(false);notify('Chưa bật được âm thanh. Mẹ thử lại nhé.');}
+    finally{button.disabled=false;}
   };
   $('memories').onclick=openMemories;$('settings').onclick=openSettings;$('letter').onclick=openLetter;
   $('photo-memories').onclick=openPhotoMemories;$('photo-memories-nav').onclick=openPhotoMemories;
@@ -298,7 +315,7 @@ async function boot(){
   dialog.addEventListener('cancel',event=>{if(photoAlbum){event.preventDefault();requestDialogClose();}});
   dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)requestDialogClose();}});
   $('skip-wait').onclick=async()=>{stop();progress=await repository.update(p=>({...p,soilReadyAt:0}));render();};
-  $('restart-demo').onclick=async()=>{stop();await repository.replace(newProgress());progress=await repository.load();render();};
+  $('restart-demo').onclick=async()=>{stop();void audio.setEnabled(false);await repository.replace(newProgress());progress=await repository.load();render();};
   if(demo){
     const select=$<HTMLSelectElement>('demo-stage');
     const first=config.watering.firstBloomWaterings,perFlower=config.watering.seasonWaterings;
@@ -310,7 +327,7 @@ async function boot(){
     stages.forEach(([count,label])=>{const option=document.createElement('option');option.value=String(count);option.textContent=label;select.append(option);});
     select.onchange=async()=>{
       stop();const count=Number(select.value);
-      await repository.replace({...newProgress(),waterings:count,firstBloomAt:count>=first?Date.now():null});
+      await repository.replace({...newProgress(),soundEnabled:progress.soundEnabled,waterings:count,firstBloomAt:count>=first?Date.now():null});
       progress=await repository.load();render();
     };
   }

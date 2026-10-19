@@ -1,7 +1,7 @@
 node_modules/
 dist/
 .git/
-assets/
+assets/flower/
 docs/previews/
 *.blend
 *.blend1
