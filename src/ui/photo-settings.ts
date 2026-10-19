@@ -19,7 +19,7 @@ export class PhotoSettings {
     const note=document.createElement('p');note.textContent=demo?'Đang xem thử: ảnh được chọn chỉ giữ tạm đến khi tải lại trang.':'Ảnh chỉ lưu trên thiết bị này, không gửi lên mạng. Mẹ có thể chọn ảnh trước; ảnh sẽ hiện khi bông hoa hoặc hộp kỷ niệm được mở.';
     const backup=document.createElement('p');backup.className='muted';backup.textContent='Đổi máy hoặc xóa dữ liệu trình duyệt sẽ cần chọn lại ảnh. Bản sao tiến độ hiện tại không chứa ảnh.';
     this.status.setAttribute('role','status');this.status.className='photo-upload-status';
-    host.append(title,note,backup,this.grid,this.status);
+    host.append(title,note,backup,this.status,this.grid);
     void this.render().catch(()=>this.status.textContent='Chưa đọc được ảnh đã lưu. Mẹ thử tải lại trang nhé.');
   }
   private release(){this.urls.forEach(url=>URL.revokeObjectURL(url));this.urls=[];}
@@ -43,7 +43,7 @@ export class PhotoSettings {
         card.append(image,caption,remove);list.append(card);
       }
       if(!selected.length){const empty=document.createElement('p');empty.className='photo-empty';empty.textContent='Chưa chọn ảnh';list.append(empty);}
-      const input=document.createElement('input');input.type='file';input.accept='image/*';input.multiple=group==='memories';input.id=`choose-photo-${group}`;input.disabled=!this.repo;
+      const input=document.createElement('input');input.type='file';input.accept='image/*,.heic,.heif';input.multiple=group==='memories';input.id=`choose-photo-${group}`;input.disabled=!this.repo;
       const upload=document.createElement('label');upload.className='secondary-button file-label';upload.htmlFor=input.id;upload.append(document.createTextNode(group==='memories'?'Thêm ảnh kỷ niệm':selected.length?'Thay ảnh':'Chọn ảnh'),input);
       input.onchange=()=>{
         const files=Array.from(input.files??[]);if(!files.length)return;
@@ -54,7 +54,7 @@ export class PhotoSettings {
           await this.repo!.put(prepared);
           // iOS may grant persistence only during a direct interaction; failure is optional.
           void navigator.storage?.persist?.().catch(()=>{});
-        },'Đã lưu ảnh trên thiết bị này.');
+        },'Đã lưu ảnh trên thiết bị này.').finally(()=>{input.value='';});
       };
       section.append(title,note,list,upload);
       if(group==='memories'){const count=document.createElement('p');count.className='muted';count.textContent=`${selected.length}/${albumLimit} ảnh · Hộp mở sau “Một khoảng riêng cho mẹ”.`;section.append(count);}

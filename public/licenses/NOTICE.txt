@@ -1,0 +1,5 @@
+This application includes heic-to 1.6.6, loaded on demand for local HEIC/HEIF decoding.
+License: GNU LGPL v3 or later; see heic-to.txt.
+Unmodified source and build instructions: https://github.com/hoppergee/heic-to/tree/v1.6.6
+Package: https://www.npmjs.com/package/heic-to/v/1.6.6
+The decoder is a separate JavaScript module in the deployment assets directory.

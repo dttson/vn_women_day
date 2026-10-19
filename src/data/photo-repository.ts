@@ -44,9 +44,21 @@ export class MemoryPhotoRepository implements PhotoRepository {
 /** Decode and re-encode locally: reduce size and discard source metadata. No upload. */
 export async function preparePhoto(file:File,group:PhotoGroup,caption:string):Promise<LocalPhoto>{
   if(file.size>25_000_000)throw new Error('Mỗi ảnh cần nhỏ hơn 25 MB.');
-  const url=URL.createObjectURL(file),image=new Image();
+  let url=URL.createObjectURL(file);const image=new Image();
   try{
-    image.src=url;await image.decode();
+    image.src=url;
+    try{await image.decode();}catch{
+      // Native HEIC decoding varies by browser. Load the local decoder only on demand.
+      const header=await file.slice(0,64).text();
+      if(!/\.hei[cf]$/i.test(file.name)&&!/^image\/hei[cf]/i.test(file.type)&&!(/ftyp/.test(header)&&/heic|heix|hevc|hevx|mif1|msf1/.test(header)))throw new Error('Không đọc được ảnh này. Mẹ thử một ảnh JPEG, PNG hoặc HEIC khác nhé.');
+      try{
+        const {isHeic,heicTo}=await import('heic-to/csp');
+        if(!await isHeic(file))throw new Error('Invalid HEIC');
+        const jpeg=await heicTo({blob:file,type:'image/jpeg',quality:.95});
+        URL.revokeObjectURL(url);url=URL.createObjectURL(jpeg);image.src=url;
+        await image.decode();
+      }catch{throw new Error('Chưa đọc được ảnh HEIC này. Mẹ thử ảnh khác hoặc xuất ảnh thành JPEG nhé.');}
+    }
     if(!image.naturalWidth||image.naturalWidth*image.naturalHeight>65_000_000)throw new Error('Ảnh quá lớn.');
     const portrait=group!=='memories',side=Math.min(image.naturalWidth,image.naturalHeight);
     const sw=portrait?side:image.naturalWidth,sh=portrait?side:image.naturalHeight;
