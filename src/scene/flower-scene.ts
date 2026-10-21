@@ -94,7 +94,7 @@ export class FlowerScene {
     this.flower.traverse(obj=>{if(obj!==this.sway && /^(Petal_|Sepal_|Stem_|Leaf_)/.test(obj.name))moving.push(obj);});
     moving.forEach(obj=>this.sway.attach(obj));
     for(let index=0;index<2;index++){
-      const flower=new SideFlower(templates,index);flower.setProgress(this.sideProgress[index],true);
+      const flower=new SideFlower(templates,index,this.config.visual.sideFlowerColors[index]);flower.setProgress(this.sideProgress[index],true);
       this.sideFlowers.push(flower);this.sway.add(flower.root);
     }
     this.bloom=this.targetBloom;

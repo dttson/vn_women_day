@@ -27,6 +27,7 @@ export const configSchema = z.object({
     background: z.string().regex(/^#[0-9a-f]{6}$/i),
     pixelRatioCap: z.number().min(1).max(2), swayAmount: z.number().min(0).max(.1),
     dustCount: z.number().int().min(0).max(100),
+    sideFlowerColors:z.tuple([z.string().regex(/^#[0-9a-f]{6}$/i),z.string().regex(/^#[0-9a-f]{6}$/i)]).default(['#83b9e5','#f1ce65']),
   }),
   messages: z.array(z.object({id: z.string().min(1), afterWaterings: z.number().int().min(0), label: z.string(), text: z.string()})).min(1),
   familyPhotos:z.object({

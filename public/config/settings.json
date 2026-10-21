@@ -18,7 +18,8 @@
     "background": "#f6f0e8",
     "pixelRatioCap": 1.75,
     "swayAmount": 0.018,
-    "dustCount": 40
+    "dustCount": 40,
+    "sideFlowerColors": ["#83b9e5", "#f1ce65"]
   },
   "messages": [
     {"id": "welcome", "afterWaterings": 0, "label": "MỘT ĐIỀU NHỎ BA MUỐN GỬI", "text": "Ba có một bông hoa dành cho mẹ. Mẹ chăm một chút, hoa sẽ hé nở nhé."},

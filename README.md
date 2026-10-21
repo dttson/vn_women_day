@@ -49,7 +49,7 @@ Edit [`public/config/settings.json`](public/config/settings.json):
 - `familyPhotos` and `photoMemories` ship empty in JSON; runtime image URLs come only from locally selected photos. Portraits appear after the corresponding flower blooms; the album unlocks after the `little-rest` keepsake. The same photos can be replaced or removed without changing watering progress. Demo photos are temporary and isolated from real photos.
 - `albumAnimation`: `lidOpenMs`, `spreadMs`, `gatherMs`, `lidCloseMs` control the box sequence. Reduced-motion users see the same states without animated movement.
 - `letter`: title, paragraphs and signature. Personal content is authored directly here and is retained when extending the garden features.
-- `visual`: model path, background, pixel-ratio cap, sway and dust count.
+- `visual`: model path, background, pixel-ratio cap, sway and dust count. `sideFlowerColors` sets Bisu’s blue and Ryo’s yellow petal colors, in that order; the central purple rose keeps the GLB material.
 
 Configuration is validated before the app starts. Invalid configuration shows a retry message instead of starting with inconsistent rules. JSON is public site content; it is not a private storage mechanism. A future dashboard can validate and publish this same format through a backend or a deployment workflow.
 

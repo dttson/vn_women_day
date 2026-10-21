@@ -61,7 +61,7 @@ export class SideFlower {
   private target=0;
   private progress=0;
   private curve:THREE.QuadraticBezierCurve3;
-  constructor(templates:Template[],index:number){
+  constructor(templates:Template[],index:number,petalColor:string){
     this.root.name=`Side_Flower_${index+1}`;
     const origin=index===0?new THREE.Vector3(-.03,1.55,0):new THREE.Vector3(.04,1.3,0);
     const tip=index===0?new THREE.Vector3(-1.05,2.12,.70):new THREE.Vector3(.98,1.85,.70);
@@ -78,7 +78,16 @@ export class SideFlower {
       leaf.rotation.set(-.25,j===0?-.4:.6,j===0?.5:2.7);this.leaves.add(leaf);
     }
     for(const template of templates){
-      const mesh=new THREE.Mesh(template.geometry,template.material);
+      const tint=(source:THREE.Material)=>{
+        if(template.sepal||!(source instanceof THREE.MeshStandardMaterial))return source;
+        // Petals need independent materials; geometry and green sepals remain shared.
+        const material=source.clone();
+        const lightness=source.color.getHSL({h:0,s:0,l:0}).l;
+        material.color.set(petalColor).multiplyScalar(.62+lightness*.6);
+        return material;
+      };
+      const material=Array.isArray(template.material)?template.material.map(tint):tint(template.material);
+      const mesh=new THREE.Mesh(template.geometry,material);
       mesh.name=template.sepal?'Sepal_Side':'Petal_Side';mesh.userData.layer=template.layer;
       mesh.morphTargetDictionary={Bloom:0};mesh.morphTargetInfluences=[0];
       // Side blooms receive light but do not add shadow passes.
