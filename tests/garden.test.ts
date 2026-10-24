@@ -38,8 +38,12 @@ describe('watering lifecycle',()=>{
     expect(p.soilReadyAt-p.updatedAt).toBe(config.watering.dailyCooldownMs);
     expect(currentMessage(p,config).id).toBe('first-bloom');
     const firstBloom=p.firstBloomAt;
-    for(let i=0;i<config.watering.seasonWaterings;i++)p=waterOneSession(p,p.soilReadyAt);
-    expect(p.firstBloomAt).toBe(firstBloom);expect(bloomProgress(p,config)).toBe(1);expect(seasons(p,config)).toBe(1);
+    for(let i=0;i<config.watering.seasonWaterings*3;i++){
+      expect(p.soilReadyAt-p.updatedAt).toBe(8*60*60*1000);
+      expect(water(p,100,p.soilReadyAt-1,config)).toEqual(p);
+      p=waterOneSession(p,p.soilReadyAt);
+    }
+    expect(p.firstBloomAt).toBe(firstBloom);expect(bloomProgress(p,config)).toBe(1);expect(seasons(p,config)).toBe(3);
   });
   it('caps stalled/background ticks rather than spending a whole can',()=>{
     const p=water(newProgress(1000),1800000,2000,config);
@@ -62,30 +66,34 @@ describe('three-flower garden and keepsakes',()=>{
   const saved=(waterings:number,usedWater=0)=>({...newProgress(1000),waterings,usedWater,firstBloomAt:2000});
   it('starts two sequential branches and grows continuously during a partial can',()=>{
     expect(gardenGrowth(saved(3),config).sideProgress).toEqual([0,0]);
-    expect(gardenGrowth(saved(3,.5),config).sideProgress).toEqual([1/6,0]);
-    expect(gardenGrowth(saved(4),config).sideProgress).toEqual([1/3,0]);
-    expect(gardenGrowth(saved(6,.5),config).sideProgress).toEqual([1,1/6]);
-    expect(gardenGrowth(saved(8,.5),config).sideProgress).toEqual([1,5/6]);
+    expect(gardenGrowth(saved(3,.5),config).sideProgress).toEqual([.1,0]);
+    expect(gardenGrowth(saved(4),config).sideProgress).toEqual([.2,0]);
+    expect(gardenGrowth(saved(8,.5),config).sideProgress).toEqual([1,.1]);
+    expect(gardenGrowth(saved(12,.5),config).sideProgress).toEqual([1,.9]);
   });
   it('restores existing progress without a reset and caps the bouquet at three blooms',()=>{
-    const restored=progressSchema.parse(JSON.parse(JSON.stringify(saved(9))));
+    const restored=progressSchema.parse(JSON.parse(JSON.stringify(saved(13))));
     expect(gardenGrowth(restored,config).flowerCount).toBe(3);
     expect(gardenGrowth(restored,config).sideProgress).toEqual([1,1]);
     const muchLater=gardenGrowth(saved(1000),config);
     expect(muchLater.flowerCount).toBe(3);expect(muchLater.sideProgress).toEqual([1,1]);
   });
   it('unlocks a keepsake only at a completed milestone, not a partial can',()=>{
-    expect(gardenGrowth(saved(8,.99),config).keepsakes).toHaveLength(0);
-    expect(gardenGrowth(saved(9),config).keepsakes).toHaveLength(1);
-    expect(gardenGrowth(saved(11,.99),config).keepsakes).toHaveLength(1);
-    expect(gardenGrowth(saved(12),config).keepsakes).toHaveLength(2);
-    expect(currentMessage(saved(12),config).id).toBe(config.growth.keepsakes[1].id);
+    expect(gardenGrowth(saved(7,.99),config).flowerCount).toBe(1);
+    expect(gardenGrowth(saved(8),config).flowerCount).toBe(2);
+    expect(gardenGrowth(saved(12,.99),config).flowerCount).toBe(2);
+    expect(gardenGrowth(saved(13),config).flowerCount).toBe(3);
+    expect(gardenGrowth(saved(12,.99),config).keepsakes).toHaveLength(0);
+    expect(gardenGrowth(saved(13),config).keepsakes).toHaveLength(1);
+    expect(gardenGrowth(saved(17,.99),config).keepsakes).toHaveLength(1);
+    expect(gardenGrowth(saved(18),config).keepsakes).toHaveLength(2);
+    expect(currentMessage(saved(18),config).id).toBe(config.growth.keepsakes[1].id);
   });
   it('shows milestones matching configured cycle length and never awards growth from time',()=>{
     const changed=structuredClone(config);changed.watering.seasonWaterings=10;
     expect(gardenGrowth(saved(8),changed).sideProgress).toEqual([.5,0]);
     expect(gardenGrowth(saved(23),changed).bouquetComplete).toBe(true);
-    expect(gardenGrowth(saved(9),config)).toEqual(gardenGrowth({...saved(9),updatedAt:999999999},config));
+    expect(gardenGrowth(saved(13),config)).toEqual(gardenGrowth({...saved(13),updatedAt:999999999},config));
   });
 });
 

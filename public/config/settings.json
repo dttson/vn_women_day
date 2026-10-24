@@ -10,7 +10,7 @@
     "absorptionMs": 1800000,
     "firstBloomWaterings": 3,
     "dailyCooldownMs": 28800000,
-    "seasonWaterings": 3
+    "seasonWaterings": 5
   },
   "visual": {
     "modelUrl": "/models/flower.glb",
