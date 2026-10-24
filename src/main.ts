@@ -148,7 +148,7 @@ function render(){
   const button=$<HTMLButtonElement>('water');button.disabled=!modelReady||waiting;
   text('water-button-label',!modelReady?'Đang chuẩn bị…':waiting?'Để hoa uống từ từ nhé':holding?'Hoa đang uống nước…':'Giữ để tưới cho hoa');
   text('water-status',waiting?'Đất đang ngấm nước':progress.usedWater>0?'Còn một chút nước cho hoa':'Bình nước đã sẵn sàng');
-  text('water-hint',waiting?(bloom>=1?(growth.bouquetComplete?'Ngày mai mình giữ thêm một chút yêu thương nhé.':'Ngày mai mình chăm nhánh hoa mới nhé mẹ.'):'Đủ nước rồi mẹ ơi. Hoa cần nghỉ một chút.'):'Nhấn giữ, thả tay để dừng');
+  text('water-hint',waiting?(bloom>=1?(growth.bouquetComplete?'Lát nữa mình giữ thêm một chút yêu thương nhé.':'Lát nữa mình chăm nhánh hoa mới nhé mẹ.'):'Đủ nước rồi mẹ ơi. Hoa cần nghỉ một chút.'):'Nhấn giữ, thả tay để dừng');
   text('wait-status',waiting?`Có thể tưới tiếp sau ${formatWait(wait)}`:growth.bouquetComplete?'Mỗi lần chăm, thêm một chút yêu thương.':'Mỗi lần chăm, hoa lại lớn thêm một chút.');
   $('water-status').closest('.water-card')?.classList.toggle('waiting',waiting);
   $('letter').hidden=!progress.firstBloomAt;

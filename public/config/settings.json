@@ -9,7 +9,7 @@
     "durationMs": 7000,
     "absorptionMs": 1800000,
     "firstBloomWaterings": 3,
-    "dailyCooldownMs": 86400000,
+    "dailyCooldownMs": 1800000,
     "seasonWaterings": 5
   },
   "visual": {

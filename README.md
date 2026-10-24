@@ -40,7 +40,7 @@ Edit [`public/config/settings.json`](public/config/settings.json):
 - `watering.durationMs`: hold time per can, default 7 seconds.
 - `watering.absorptionMs`: wait between the first watering sessions, default 30 minutes.
 - `watering.firstBloomWaterings`: number of sessions before the first full bloom, default 3.
-- `watering.dailyCooldownMs`: cooldown after blooming, default 24 hours after each completed session.
+- `watering.dailyCooldownMs`: cooldown after blooming (including Bisu and Ryo), default 30 minutes after each completed session.
 - `watering.seasonWaterings`: later care sessions per commemorative season, default 5.
 - `messages`: stable IDs, unlock thresholds and messages.
 - `growth.flowerNames`: the three flower labels, currently Ba, Bisu and Ryo.
