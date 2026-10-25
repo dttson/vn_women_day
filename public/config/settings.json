@@ -8,8 +8,9 @@
   "watering": {
     "durationMs": 7000,
     "absorptionMs": 1800000,
-    "firstBloomWaterings": 3,
-    "dailyCooldownMs": 28800000,
+    "firstBloomWaterings": 5,
+    "dailyCooldownMs": 86400000,
+    "dailyWaterings": 3,
     "seasonWaterings": 5
   },
   "visual": {
@@ -25,10 +26,10 @@
     {"id": "welcome", "afterWaterings": 0, "label": "MỘT ĐIỀU NHỎ BA MUỐN GỬI", "text": "Ba có một bông hoa dành cho mẹ. Mẹ chăm một chút, hoa sẽ hé nở nhé."},
     {"id": "thank-you", "afterWaterings": 1, "label": "MỘT CHÚT YÊU THƯƠNG", "text": "Cảm ơn mẹ vì những điều nhỏ bé mẹ làm cho cả nhà mỗi ngày."},
     {"id": "ordinary-days", "afterWaterings": 2, "label": "THÊM MỘT CHÚT NỮA THÔI", "text": "Có mẹ, những ngày bình thường của ba và hai con cũng trở nên đặc biệt."},
-    {"id": "first-bloom", "afterWaterings": 3, "label": "CHÚC MỪNG 20/10, MẸ YÊU", "text": "Bông hoa này ba dành tặng mẹ. Cảm ơn mẹ vì đã cùng ba chăm sóc tổ ấm và hai em bé Bisu và Ryo."},
-    {"id": "tomorrow", "afterWaterings": 4, "label": "YÊU THƯƠNG, MỖI NGÀY", "text": "Qua ngày 20/10 rồi, ba vẫn muốn dành những điều dịu dàng này cho mẹ."},
-    {"id": "home", "afterWaterings": 6, "label": "NHÀ LÀ NƠI CÓ MẸ", "text": "Mong mẹ luôn có những khoảng thời gian dành riêng cho mình, và những ngày thật nhẹ nhàng."},
-    {"id": "new-season", "afterWaterings": 8, "label": "MỘT MÙA YÊU THƯƠNG MỚI", "text": "Thêm một mùa hoa, thêm một lời cảm ơn. Ôm mẹ, hôm nay và những ngày sau nữa."}
+    {"id": "first-bloom", "afterWaterings": 5, "label": "CHÚC MỪNG 20/10, MẸ YÊU", "text": "Bông hoa này ba dành tặng mẹ. Cảm ơn mẹ vì đã cùng ba chăm sóc tổ ấm và hai em bé Bisu và Ryo."},
+    {"id": "tomorrow", "afterWaterings": 6, "label": "YÊU THƯƠNG, MỖI NGÀY", "text": "Qua ngày 20/10 rồi, ba vẫn muốn dành những điều dịu dàng này cho mẹ."},
+    {"id": "home", "afterWaterings": 8, "label": "NHÀ LÀ NƠI CÓ MẸ", "text": "Mong mẹ luôn có những khoảng thời gian dành riêng cho mình, và những ngày thật nhẹ nhàng."},
+    {"id": "new-season", "afterWaterings": 10, "label": "MỘT MÙA YÊU THƯƠNG MỚI", "text": "Thêm một mùa hoa, thêm một lời cảm ơn. Ôm mẹ, hôm nay và những ngày sau nữa."}
   ],
   "albumAnimation": {"lidOpenMs":400,"spreadMs":680,"gatherMs":500,"lidCloseMs":320},
   "photoMemories": [],

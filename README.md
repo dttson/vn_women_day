@@ -38,9 +38,10 @@ Edit [`public/config/settings.json`](public/config/settings.json):
 
 - `audio`: background music, click, bloom and photo-chime volumes (0–1). Audio source credits are in `assets/sound/README.md` and `/licenses/AUDIO.txt`.
 - `watering.durationMs`: hold time per can, default 7 seconds.
-- `watering.absorptionMs`: wait between the first watering sessions, default 30 minutes.
-- `watering.firstBloomWaterings`: number of sessions before the first full bloom, default 3.
-- `watering.dailyCooldownMs`: cooldown after blooming (including Bisu and Ryo), default 8 hours after each completed session.
+- `watering.absorptionMs`: wait between watering sessions within a batch, default 30 minutes.
+- `watering.firstBloomWaterings`: number of sessions before the first full bloom, default 5.
+- `watering.dailyCooldownMs`: wait after the third completed watering in a batch, default 24 hours.
+- `watering.dailyWaterings`: maximum completed waterings per batch, default 3. The first two waterings each start a 30-minute wait; the third starts a 24-hour wait from its completion, including across midnight. Unused turns carry over; partial watering does not consume a turn.
 - `watering.seasonWaterings`: later care sessions per commemorative season, default 5.
 - `messages`: stable IDs, unlock thresholds and messages.
 - `growth.flowerNames`: the three flower labels, currently Ba, Bisu and Ryo.
@@ -58,14 +59,14 @@ Configuration is validated before the app starts. Invalid configuration shows a 
 - GLB rose with independent petal/sepal morph targets; approved head size of 1.4× the original model.
 - Watering can animation, water droplets, soil moisture tint, gentle sway and optional audio: Gentle piano background music, real button/bloom/page effects, and synthesized watering. The homepage reminds mom to enable sound. Music uses a Web Audio gain, pauses when hidden, and starts through user interaction; the saved sound preference is restored without forcing autoplay.
 - Press and hold with pointer/touch, or focus the water button and hold Space/Enter; release, blur, page hide and pointer cancellation stop watering.
-- Three initial sessions reveal messages and unlock the letter. Each next five care sessions grows one side branch through leaves, bud and bloom. The bouquet is capped at three flowers, named Ba, Bisu and Ryo.
+- Five initial sessions reveal messages and unlock the letter. Each next five care sessions grows one side branch through leaves, bud and bloom. The bouquet is capped at three flowers, named Ba, Bisu and Ryo.
 - Each partial watering visibly advances the active side flower. After all three bloom, a keepsake unlocks immediately, then another every five completed sessions until the configured set is exhausted. All unlocked keepsakes remain in the memory box; adding more to JSON extends the collection.
 - Side petals share merged geometry/materials (six head meshes per side flower), and watering gives gentle plant movement and brief sparkling droplets.
 - IndexedDB writes during watering, absolute ready-at timestamps, and reload recovery of partial cans.
 - Atomic repository changes and cross-tab refresh notifications.
 - Memory box, export/import JSON backups, home-screen manifest and Safari home-screen guidance.
 - Original local photo copies are kept under ignored `private-local/`, outside Vite’s public directory. Photos, local previews and this folder are excluded from Git and Vercel; the production build contains no bundled family photos.
-- A separate photo memory box unlocks from the page card and photo icon after the keepsake `little-rest` ("Một khoảng riêng cho mẹ"): five completed sessions after the bouquet, or 18 sessions total with the default configuration. Its lid opens before six photos spread upward as a fan carousel. Swipe/drag, tap a side card or dot, use arrows or press Left/Right to navigate. On close, the photos return into the box before its lid closes; only then is the dialog removed. Close, Escape and backdrop dismissal share this sequence, including during opening.
+- A separate photo memory box unlocks from the page card and photo icon after the keepsake `little-rest` ("Một khoảng riêng cho mẹ"): five completed sessions after the bouquet, or 20 sessions total with the default configuration. Its lid opens before six photos spread upward as a fan carousel. Swipe/drag, tap a side card or dot, use arrows or press Left/Right to navigate. On close, the photos return into the box before its lid closes; only then is the dialog removed. Close, Escape and backdrop dismissal share this sequence, including during opening.
 - Explicit in-memory fallback notice if browser storage is unavailable. Failed writes stop watering and report the problem.
 - Reduced-motion preference, keyboard controls, labeled buttons and a focus-managed native dialog.
 

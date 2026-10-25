@@ -5,12 +5,13 @@ export const progressSchema = z.object({
   schemaVersion:z.literal(1), id:z.literal('garden'),
   createdAt:z.number().finite().nonnegative(), updatedAt:z.number().finite().nonnegative(),
   waterings:z.number().int().min(0), usedWater:z.number().min(0).max(1),
+  cycleWaterings:z.number().int().min(0).max(100).default(0),
   soilReadyAt:z.number().finite().nonnegative(), firstBloomAt:z.number().finite().nonnegative().nullable(),
   soundEnabled:z.boolean(),
 });
 export type Progress = z.infer<typeof progressSchema>;
 export function newProgress(now=Date.now()): Progress {
-  return {schemaVersion:1,id:'garden',createdAt:now,updatedAt:now,waterings:0,usedWater:0,soilReadyAt:0,firstBloomAt:null,soundEnabled:false};
+  return {schemaVersion:1,id:'garden',createdAt:now,updatedAt:now,waterings:0,cycleWaterings:0,usedWater:0,soilReadyAt:0,firstBloomAt:null,soundEnabled:false};
 }
 export function bloomProgress(p:Progress,c:AppConfig):number {
   if(p.firstBloomAt!==null)return 1;
@@ -19,14 +20,15 @@ export function bloomProgress(p:Progress,c:AppConfig):number {
 export function remainingWait(p:Progress,now:number):number { return Math.max(0,p.soilReadyAt-now); }
 export function water(p:Progress,elapsedMs:number,now:number,c:AppConfig):Progress {
   if (remainingWait(p,now)>0 || !Number.isFinite(elapsedMs) || elapsedMs<=0) return p;
+  const cycleWaterings=p.cycleWaterings>=c.watering.dailyWaterings?0:p.cycleWaterings;
   // Bound each tick: background/resume time must never become free watering.
   const amount=Math.min(elapsedMs,300)/c.watering.durationMs;
   const used=p.usedWater+amount;
-  if(used<1-1e-8) return {...p,usedWater:used,updatedAt:now};
+  if(used<1-1e-8) return {...p,cycleWaterings,usedWater:used,updatedAt:now};
   const waterings=p.waterings+1;
   const bloomed=waterings>=c.watering.firstBloomWaterings;
-  return {...p,waterings,usedWater:0,updatedAt:now,
-    soilReadyAt:now+(bloomed?c.watering.dailyCooldownMs:c.watering.absorptionMs),
+  return {...p,waterings,cycleWaterings:cycleWaterings+1,usedWater:0,updatedAt:now,
+    soilReadyAt:now+(cycleWaterings+1>=c.watering.dailyWaterings?c.watering.dailyCooldownMs:c.watering.absorptionMs),
     firstBloomAt:p.firstBloomAt ?? (bloomed?now:null)};
 }
 export function currentMessage(p:Progress,c:AppConfig) {

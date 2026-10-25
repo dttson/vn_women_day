@@ -135,6 +135,7 @@ function start(){
 function render(){
   if(!progress||!config)return;
   const now=Date.now(),wait=remainingWait(progress,now),waiting=wait>0;
+  const quotaUsed=waiting&&progress.cycleWaterings>=config.watering.dailyWaterings;
   const bloom=bloomProgress(progress,config);
   const growth=gardenGrowth(progress,config);
   const photosUnlocked=growth.keepsakes.some(memory=>memory.id==='little-rest');
@@ -147,8 +148,8 @@ function render(){
   document.querySelector('[role="progressbar"]')?.setAttribute('aria-valuenow',String(percent));
   const button=$<HTMLButtonElement>('water');button.disabled=!modelReady||waiting;
   text('water-button-label',!modelReady?'Đang chuẩn bị…':waiting?'Để hoa uống từ từ nhé':holding?'Hoa đang uống nước…':'Giữ để tưới cho hoa');
-  text('water-status',waiting?'Đất đang ngấm nước':progress.usedWater>0?'Còn một chút nước cho hoa':'Bình nước đã sẵn sàng');
-  text('water-hint',waiting?(bloom>=1?(growth.bouquetComplete?'Lát nữa mình giữ thêm một chút yêu thương nhé.':'Lát nữa mình chăm nhánh hoa mới nhé mẹ.'):'Đủ nước rồi mẹ ơi. Hoa cần nghỉ một chút.'):'Nhấn giữ, thả tay để dừng');
+  text('water-status',quotaUsed?'Đã tưới đủ lượt hôm nay':waiting?'Đất đang ngấm nước':progress.usedWater>0?'Còn một chút nước cho hoa':'Bình nước đã sẵn sàng');
+  text('water-hint',quotaUsed?'Mẹ đã chăm đủ hôm nay rồi. Sau 24 tiếng mình lại tưới tiếp nhé.':waiting?(bloom>=1?(growth.bouquetComplete?'Lát nữa mình giữ thêm một chút yêu thương nhé.':'Lát nữa mình chăm nhánh hoa mới nhé mẹ.'):'Đủ nước rồi mẹ ơi. Hoa cần nghỉ một chút.'):`Còn ${config.watering.dailyWaterings-(progress.cycleWaterings>=config.watering.dailyWaterings?0:progress.cycleWaterings)} lượt trong đợt này · Nhấn giữ để tưới`);
   text('wait-status',waiting?`Có thể tưới tiếp sau ${formatWait(wait)}`:growth.bouquetComplete?'Mỗi lần chăm, thêm một chút yêu thương.':'Mỗi lần chăm, hoa lại lớn thêm một chút.');
   $('water-status').closest('.water-card')?.classList.toggle('waiting',waiting);
   $('letter').hidden=!progress.firstBloomAt;
@@ -168,7 +169,7 @@ function render(){
   const part=growth.sideProgress[growth.sideIndex];
   $('growth-fill').style.width=`${Math.round((growth.bouquetComplete?growth.nextMemory?growth.memoryProgress:1:part)*100)}%`;
   text('growth-detail',growth.bouquetComplete?(growth.nextMemory?`Thêm ${config.watering.seasonWaterings-(Math.max(0,progress.waterings-growth.bouquetAt)%config.watering.seasonWaterings)} lượt chăm để mở “${growth.nextMemory.title}”`:'Mẹ có thể xem lại những điều ba gửi trong Hộp kỷ niệm.'):`${growth.completedSteps}/${config.watering.seasonWaterings} lượt chăm · Nhánh nhỏ → lá → nụ → hé cánh → nở hoa`);
-  const wetness=waiting?Math.min(1,wait/(bloom>=1?config.watering.dailyCooldownMs:config.watering.absorptionMs)):progress.usedWater;
+  const wetness=waiting?Math.min(1,wait/(quotaUsed?config.watering.dailyCooldownMs:config.watering.absorptionMs)):progress.usedWater;
   scene?.setState(bloom,wetness,growth.sideProgress);
   $('sound').setAttribute('aria-pressed',String(progress.soundEnabled));
   $('sound').setAttribute('aria-label',progress.soundEnabled?'Tắt âm thanh':'Bật âm thanh');
@@ -245,7 +246,7 @@ function openSettings(){
     <div class="settings-group"><h3>Ảnh của nhà mình</h3><p>Chọn ảnh cho hoa của mẹ, Bisu, Ryo và hộp kỷ niệm. Ảnh chỉ lưu trên thiết bị này.</p><button class="secondary-button" id="manage-photos">Chọn ảnh gia đình</button></div>
     <div class="settings-group"><h3>Lưu những mùa hoa</h3><p>Tiến độ được lưu trên trình duyệt này. Safari có thể tự xóa dữ liệu; mẹ có thể giữ một bản sao để khôi phục. Bản sao này chỉ chứa tiến độ, không chứa ảnh; nếu đổi máy mẹ cần chọn lại ảnh.</p><div class="settings-actions"><button class="secondary-button" id="export">Xuất bản sao</button><label class="secondary-button file-label">Nhập bản sao<input id="import" type="file" accept="application/json,.json"/></label></div><p id="import-status" class="muted" role="status"></p></div>
     <div class="settings-group"><h3>Đặt khu vườn ra màn hình chính</h3><p>Trên Safari iPhone, chọn Chia sẻ → Thêm vào MH chính. Mở khu vườn từ biểu tượng đó để chăm hoa thuận tiện hơn.</p><p class="muted" id="persistent-status">Đang kiểm tra lưu trữ…</p></div>
-    <div class="settings-group"><h3>Ba bông hoa ở bên mẹ</h3><p>Sau bông hoa đầu, mỗi ${config.watering.seasonWaterings} lượt chăm sẽ giúp một nhánh mới mọc lá, có nụ rồi nở hoa. Khi đủ ba bông, mình tiếp tục giữ thêm lời nhắn và kỷ niệm. Không có ngày bị bỏ lỡ. Hoa vẫn luôn ở đây.</p></div>
+    <div class="settings-group"><h3>Ba bông hoa ở bên mẹ</h3><p>Mỗi đợt có ${config.watering.dailyWaterings} lượt tưới, cách nhau ${formatWait(config.watering.absorptionMs)}. Sau lượt cuối, chờ ${formatWait(config.watering.dailyCooldownMs)} để có đợt mới. Hoa đầu tiên nở sau ${config.watering.firstBloomWaterings} lượt chăm. Sau bông hoa đầu, mỗi ${config.watering.seasonWaterings} lượt chăm sẽ giúp một nhánh mới mọc lá, có nụ rồi nở hoa. Khi đủ ba bông, mình tiếp tục giữ thêm lời nhắn và kỷ niệm. Không có ngày bị bỏ lỡ. Hoa vẫn luôn ở đây.</p></div>
     <a class="demo-link" href="/?demo=1">Xem thử hành trình nở hoa ↗</a>`;
   $('export').onclick=downloadBackup;
   $('manage-photos').onclick=openPhotoSettings;

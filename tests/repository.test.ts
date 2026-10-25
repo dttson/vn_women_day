@@ -7,9 +7,10 @@ describe('IndexedDB progress',()=>{
   it('retains a partial watering when a new repository opens the same database',async()=>{
     const name=`test-${crypto.randomUUID()}`;
     const first=new IndexedDBProgressRepository(name);
-    await first.update(p=>({...p,usedWater:.45,soilReadyAt:123456}));
+    await first.update(p=>({...p,usedWater:.45,soilReadyAt:123456,cycleWaterings:2}));
     const second=new IndexedDBProgressRepository(name);const reloaded=await second.load();
     expect(reloaded.usedWater).toBe(.45);expect(reloaded.soilReadyAt).toBe(123456);
+    expect(reloaded.cycleWaterings).toBe(2);
   });
   it('serializes concurrent writes rather than losing progress',async()=>{
     const name=`test-${crypto.randomUUID()}`;

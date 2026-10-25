@@ -20,6 +20,7 @@ export const configSchema = z.object({
     absorptionMs: z.number().int().min(1000),
     firstBloomWaterings: z.number().int().min(1).max(100),
     dailyCooldownMs: z.number().int().min(1000),
+    dailyWaterings: z.number().int().min(1).max(100).default(3),
     seasonWaterings: z.number().int().min(1).max(100),
   }),
   visual: z.object({
